@@ -1,4 +1,4 @@
-# Lo que quedó instalado (35 paquetes)
+# Lo que quedó instalado (33 paquetes)
 
 Estado al 16/11/2026. Antes había 112.
 
@@ -25,7 +25,6 @@ Estado al 16/11/2026. Antes había 112.
 | `com.android.mms` | Mensajes (SMS/MMS). | `/system/app/Mms.apk` |
 | `com.android.phone` | Llamadas y radio celular. | `/system/app/Phone.apk` |
 | `com.android.stk` | Menú de la tarjeta SIM. | `/system/app/Stk.apk` |
-| `com.cellon.fastdormancy` | Ahorro de batería en datos 3G (con datos apagados no hace nada). | `/system/app/CellonFastDormancy.apk` |
 
 ## Multimedia
 
@@ -45,7 +44,6 @@ Estado al 16/11/2026. Antes había 112.
 | `com.android.settings` | Ajustes. | `/system/app/Settings.apk` |
 | `com.android.systemui` | Barra de estado. | `/system/app/SystemUI.apk` |
 | `com.qualcomm.alerter` | Alertas de emergencia por difusión celular (Qualcomm). | `/system/app/Alerter.apk` |
-| `com.qualcomm.privinit` | Ajusta caché/hilos de red al arrancar (Qualcomm); inofensivo. | `/system/app/PrivInit.apk` |
 
 ## Datos
 

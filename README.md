@@ -12,10 +12,10 @@ Todo lo que se instaló se **compiló desde el código fuente** después de revi
 
 | | Antes | Después |
 |---|---|---|
-| Paquetes instalados | 112 | 35 |
+| Paquetes instalados | 112 | 33 |
 | Apps de Google, Facebook, Twitter, Motoblur, clima, etc. | sí | ninguna |
 | Envío de datos a terceros (Google, Motorola, Tencent por el gestor de root) | sí | no encontramos ninguno |
-| RAM libre después de arrancar | ~23 MB (+135 MB caché) | ~270 MB |
+| RAM libre después de arrancar | ~23 MB (+135 MB caché) | ~290 MB |
 | Espacio libre en `/flex` / `/data` | 6 MB / 116 MB | 70 MB / 130 MB |
 | Teclado en español con sugerencias | no (el de Motorola no tenía diccionario) | sí, 60.000 palabras |
 | Páginas HTTPS modernas (Google, Wikipedia, bancos, gobierno) | no abrían (TLS 1.0) | sí, TLS 1.2 y 1.3 |
@@ -27,7 +27,7 @@ Todo lo que se instaló se **compiló desde el código fuente** después de revi
 | App | Qué es | Código (fork) | Release | Qué le cambiamos |
 |---|---|---|---|---|
 | **Navegador** | Lightning Browser 3.0.5 | [Lightning-Browser](https://github.com/facundosterzerforino/Lightning-Browser/tree/xt550-libre) | [xt550-3.0.5-tls-r2](https://github.com/facundosterzerforino/Lightning-Browser/releases/tag/xt550-3.0.5-tls-r2) | **HTTPS moderno (TLS 1.3) con mbedTLS 3.6.7** dentro del WebView de Android 2.3; raíces de Mozilla; lista de descargas propia; aviso si la fecha está mal; sin favicons de Google ni permisos de ubicación; en español. |
-| **Teclado Libre** | Teclado AOSP 2.3.6 | [teclado-libre](https://github.com/facundosterzerforino/teclado-libre/tree/teclado-es) | [v2.3.6-es1](https://github.com/facundosterzerforino/teclado-libre/releases/tag/v2.3.6-es1) | Diccionario español de 60k palabras convertido al formato de 2.3, tecla ñ, sin micrófono. |
+| **Teclado Libre** | Teclado AOSP 2.3.6 | [teclado-libre](https://github.com/facundosterzerforino/teclado-libre/tree/teclado-es) | [v2.3.6-es2](https://github.com/facundosterzerforino/teclado-libre/releases/tag/v2.3.6-es2) | Diccionario español de 60k palabras convertido al formato de 2.3, tecla ñ, sin micrófono, y su propio motor de diccionario compilado con el NDK (ya no usa la librería de Motorola). |
 | **Música Simple** | App nuestra (desde cero) | [simple-music-player](https://github.com/facundosterzerforino/simple-music-player) | [v1.2.0](https://github.com/facundosterzerforino/simple-music-player/releases/tag/v1.2.0) | 17 KB. Memoria interna y tarjeta, sin internet. El botón físico de música pausa y reanuda. |
 | **Pantalla de inicio** | ADW.Launcher 1.3.6 | [android_packages_apps_Launcher](https://github.com/facundosterzerforino/android_packages_apps_Launcher/tree/xt550-libre) | [xt550-1.3.6](https://github.com/facundosterzerforino/android_packages_apps_Launcher/releases/tag/xt550-1.3.6) | Solo arreglos para compilar. Reemplaza al lanzador 3D de Motorola. |
 | **Reloj** | DeskClock AOSP 2.3.6 | [android_packages_apps_DeskClock](https://github.com/facundosterzerforino/android_packages_apps_DeskClock/tree/xt550-libre) | [xt550-2.3.6](https://github.com/facundosterzerforino/android_packages_apps_DeskClock/releases/tag/xt550-2.3.6) | Paquete propio (`org.librereloj`), sin permisos de sistema. |
@@ -48,7 +48,13 @@ Otras cosas nuestras:
 | BatteryBot (lo usamos hasta tener el % en el ícono) | [Battery-Indicator-Free](https://github.com/facundosterzerforino/Battery-Indicator-Free/tree/xt550-gingerbread), [release](https://github.com/facundosterzerforino/Battery-Indicator-Free/releases/tag/xt550-10.0.1-beta1) |
 | Probadas y descartadas (forks guardados) | [vanilla](https://github.com/facundosterzerforino/vanilla), [little-music-player](https://github.com/facundosterzerforino/little-music-player), [filemanager](https://github.com/facundosterzerforino/filemanager) |
 
-Lo que **sigue siendo de Motorola**: Teléfono, Contactos, Mensajes, Cámara, Ajustes, la barra de estado y los servicios de sistema. Los drivers y el firmware no se pueden reemplazar.
+Lo que **sigue siendo de fábrica**:
+- **Teléfono, Contactos y Mensajes.** Son Android con pocos agregados de Motorola/Cellon. Mensajes es lo que más tiene: pantallas de Cellon y un "firewall" de SMS.
+- **Cámara, Ajustes, la barra de estado y los proveedores de datos.** Casi todo es código de Android; no se pueden recompilar sin la firma de Motorola.
+- **Alerter** (alertas de emergencia de Qualcomm), que se dejó a propósito.
+- **Drivers y firmware**, que no se pueden reemplazar.
+
+El análisis pieza por pieza está en [docs/lo-que-queda.md](docs/lo-que-queda.md).
 
 ## Paso a paso
 
@@ -56,7 +62,7 @@ El detalle de cada paso, con comandos, está en [docs/paso-a-paso.md](docs/paso-
 
 1. **Respaldo.** Antes de tocar nada copiamos a la PC todas las apps de sistema (`/system/app` y `/flex/app`: 170 archivos) con su SHA256. Contra esa copia se verificó cada archivo antes de borrarlo.
 2. **Root.** El exploit libre (zergRush) no funcionó en este firmware. Funcionó *Romaster* (herramienta china, cerrada), que instaló su propio gestor de root, una tienda de apps y un servicio de notificaciones de Tencent. Todo eso se reemplazó después (paso 9).
-3. **Limpieza por etapas.** 11 tandas, siempre igual:
+3. **Limpieza por etapas.** 12 tandas, siempre igual:
    - verificar el hash contra el respaldo;
    - guardar los datos de la app;
    - borrar;
@@ -89,6 +95,10 @@ El detalle de cada paso, con comandos, está en [docs/paso-a-paso.md](docs/paso-
     - zona horaria de Buenos Aires.
 12. **Hora por Internet.** App propia: SNTP más `date -s` como root.
 13. **Porcentaje en el ícono de batería.** Cambiamos 13 piezas de `framework-res.apk`: dígitos en lugar de 10 dibujos de batería, más 3 recetas con 101 niveles. La firma se mantiene válida y BatteryBot dejó de hacer falta.
+
+14. **Últimas piezas cerradas.**
+    - Teclado Libre trae ahora su propio motor de diccionario, compilado por nosotros, y se borró el de Motorola.
+    - Se borraron PrivInit (Qualcomm) y CellonFastDormancy: en este teléfono no hacían nada útil.
 
 ![Batería del sistema, niveles 0 a 100](img/bateria-101.png)
 

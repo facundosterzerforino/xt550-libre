@@ -5,7 +5,7 @@ Lista completa de lo que se sacó del teléfono, por etapa.
 - **SHA256 original**: la huella del archivo de fábrica (del respaldo previo al root). Antes de borrar cada archivo se verificó que coincidiera con la copia en la PC.
 - Las que dicen *instalada por nosotros* o *la instaló la herramienta de root* no venían de fábrica.
 
-En total: 87 paquetes de fábrica + 6 instalados después y borrados. Quedan 35 (ver [paquetes-finales.md](paquetes-finales.md)).
+En total: 89 paquetes de fábrica + 6 instalados después y borrados. Quedan 33 (ver [paquetes-finales.md](paquetes-finales.md)).
 
 ## 1. Apps viejas que ya no funcionan
 
@@ -155,10 +155,18 @@ En total: 87 paquetes de fábrica + 6 instalados después y borrados. Quedan 35 
 | `com.cellon.ringmodeprofile` | Modo de timbre / perfiles de sonido | `/system/app/RingModeProfile.apk` | `248e8557ac1d30e2d6f2c995ef26baa6369f427b742fed373fd83323ca062c06` |
 | `com.darshancomputing.BatteryIndicator` | BatteryBot; reemplazado por el % en el ícono del sistema | *instalada por nosotros* | |
 
+## 12. Piezas cerradas que no hacían nada
+
+| Paquete | Qué era | Ruta original | SHA256 original |
+|---|---|---|---|
+| `com.qualcomm.privinit` | Qualcomm (cerrado): al encender fijaba valores de red del navegador (10 conexiones, caché de 12 MB) y quedaba en memoria (~15 MB). Sin él, Android usa sus valores normales (4 conexiones, 8 MB). | `/system/app/PrivInit.apk` | `7b1937c6c7b508749125b57368a6b7e47bb352e7e46370d9f02e6c19fb00617b` |
+| `com.cellon.fastdormancy` | Cellon (cerrado): libera antes el canal de datos 3G. Con los datos móviles apagados no hace nada. | `/system/app/CellonFastDormancy.apk` | `c984bde7fb6b42b7a6cd223861afe0369aa9db9ce14f9defaef3e68408f41bc9` |
+
 ## Otros archivos
 
 - `/system/tts/nuance/` (17 archivos de voz, 5,5 MB): restos de los comandos de voz Nuance.
 - `/system/lib/plugins/com.android.dxdrmplugin/libcom.android.dxdrmplugin.so`: plugin DRM del navegador viejo.
 - `/system/bin/.suv`, `/system/usr/.suv` y `/data/local/tmp/.romaster_script`: copias ocultas de `su` que dejó la herramienta de root.
 - 35 archivos huérfanos de `/data/dalvik-cache` y 39 carpetas de `/data/data` de paquetes ya borrados.
-- Se **conservaron** a propósito `libjni_latinime.so` (la usa Teclado Libre), `libDxDrm*.so` y `DxDrmServerIpc` (los usan MediaPlayer, MediaScanner, webkit y MMS de Motorola), y `DownloadProvider`/`CalendarProvider` (proveedores de datos).
+- `/system/lib/libjni_latinime.so` (motor del diccionario del teclado, compilado por Motorola, SHA256 `a90a4e24e0645266e5a2491ca9a06ce6a82efa145ec82963596bd41c4782402a`): se borró cuando Teclado Libre pasó a traer el suyo, compilado por nosotros (versión es2).
+- Se **conservaron** a propósito `libDxDrm*.so` y `DxDrmServerIpc` (los usan MediaPlayer, MediaScanner, webkit y MMS de Motorola), y `DownloadProvider`/`CalendarProvider` (proveedores de datos).

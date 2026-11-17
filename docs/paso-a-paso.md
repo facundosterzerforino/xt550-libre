@@ -66,7 +66,7 @@ Al principio movíamos las apps a una carpeta de cuarentena. Después se borraro
 - **DRM de Discretix**: el framework de Motorola lo llama desde MediaPlayer, MediaScanner, webkit y MMS. Se borró la app, pero se dejaron las librerías y el servicio. Sin ellos no sonaría ni la alarma.
 - **Teclado de Android de fábrica**: se borró la app, pero `libjni_latinime.so` queda, porque la usa Teclado Libre.
 
-Las 11 tandas, con cada paquete, están en [paquetes-borrados.md](paquetes-borrados.md).
+Las 12 tandas, con cada paquete, están en [paquetes-borrados.md](paquetes-borrados.md).
 
 ## 4. Pantalla de inicio y animaciones
 
@@ -200,3 +200,15 @@ Las recetas se compilaron con `aapt` contra el propio `framework-res.apk`. Proba
 La instalación se hace copiando a `.new` y renombrando (nunca sobrescribiendo: todos los procesos tienen el archivo abierto), y después se reinicia. Con esto se borró BatteryBot.
 
 Herramientas y detalle: [xt550-battery-percent](https://github.com/facundosterzerforino/xt550-battery-percent).
+
+## 15. Últimas piezas cerradas
+
+- **Teclado Libre es2.** El motor del diccionario (`native/` de AOSP 2.3.6, sin cambios) se compila con el NDK r10e y va dentro del APK como `lib/armeabi-v7a/libjni_latinime.so` (13 KB). Android carga primero la copia de la app. Lo verificamos de dos formas:
+  - en `/proc/<pid>/maps` aparece la librería de la app;
+  - escribiendo `cancion` → `canción`.
+
+  Después se borró la copia de Motorola en `/system/lib`.
+- **PrivInit** (Qualcomm, cerrado): solo ejecutaba `setprop` al encender y quedaba en memoria. Leyendo `framework.odex` vimos qué hace Android si esos valores faltan: usa los suyos (`net.http.threads` 4, caché de webkit 8 MB, `idle_cache` 8). Se borró.
+- **CellonFastDormancy** (cerrado): solo actúa con datos 3G, que están apagados. Se borró.
+
+Se hizo con [`tools/borrar_app_sistema.py`](../tools/borrar_app_sistema.py): 35 → 33 paquetes. Después de reiniciar, root, teclado, Navegador y las 12 apps principales siguieron funcionando.
